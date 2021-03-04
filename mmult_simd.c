@@ -25,11 +25,11 @@ int mmult(double *c,
 	      double *b, int bRows, int bCols) {
 	for (int i=0; i < aRows; i++) {
   		for (int j = 0; j < bCols; j++){
-    			c[i][j] = 0;
+    			c[i*bCols + j]  = 0;
   		}
-  		for (int k = 0; k < bRows; k++){
-    			for (int l = 0; l < bCols; l++){
-      				c[i][l] += a[i][k] * b[k][l];
+  		for (int k = 0; k < aCols; k++){
+    			for (int j = 0; j < bCols; j++){
+      				c[i*bCols + j] += a[i*aCols +k ] * b[k*bCols + j ];
 			}
   		}
 	}
