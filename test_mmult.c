@@ -10,10 +10,10 @@ int test_unoptimized(double *a, int arows, int acols,
                      double *b, int brows, int bcols,
                      double *c_actual) {
         double *c_calc = malloc(MAT_SIZE * MAT_SIZE * sizeof(double));
-    for(int i = 0; i <= MAT_SIZE; i++){
+    for(int i = 5; i <= MAT_SIZE; i++){
         clock_t start, end;
         start = clock();
-        mmult(c_calc, a, MAT_SIZE, MAT_SIZE, b, MAT_SIZE, MAT_SIZE);
+        mmult(c_calc, a, i, i, b, i, i);
         end = clock();
         double time_taken = ((double)(end - start))/CLOCKS_PER_SEC;
         printf("matrix size %i - %f seconds taken\n", i, time_taken);
