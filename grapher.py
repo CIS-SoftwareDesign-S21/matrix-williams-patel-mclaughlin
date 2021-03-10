@@ -22,9 +22,9 @@ for i in range(2,int(sys.argv[1]) + 2):
 
     for index, element in enumerate(f_list):
         if index % 2 == 0:
-            y_values.append(int(element))
+            x_values.append(int(element))
         else:
-            x_values.append(element)
+            y_values.append(element)
     x_array.append(x_values)
     y_array.append(y_values)
     plt.plot(x_array[i-2],y_array[i-2],c=colors[i%len(colors)],label=sys.argv[i])  
