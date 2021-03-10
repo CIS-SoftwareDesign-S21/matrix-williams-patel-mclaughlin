@@ -39,6 +39,6 @@ for i in range(2,int(sys.argv[1]) + 2):
 #mmult_simd_results.txt 
 # function to show the plot 
 plt.legend()
+plt.savefig('graph.png')
 plt.show()
-
 file1.close()
