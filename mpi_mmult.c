@@ -27,8 +27,8 @@ int main(int argc, char **argv)
     srand ( time(NULL) );
     for (int i = 0; i<N; i++) {
       for (int j = 0; j<N; j++) {
-        matrix_a[i][j]= rand()%10;
-        matrix_b[i][j]= rand()%10;
+        a[i][j]= rand()%10;
+        b[i][j]= rand()%10;
       }
     }
 	
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
    printf("\nMatrix A\n\n");
     for (int i = 0; i<N; i++) {
       for (int j = 0; j<N; j++) {
-        printf("%.0f\t", matrix_a[i][j]);
+        printf("%.0f\t", a[i][j]);
       }
 	    printf("\n");
     }
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     printf("\nMatrix B\n\n");
     for (int i = 0; i<N; i++) {
       for (int j = 0; j<N; j++) {
-        printf("%.0f\t", matrix_b[i][j]);
+        printf("%.0f\t", b[i][j]);
       }
 	    printf("\n");
     }
@@ -57,8 +57,8 @@ int main(int argc, char **argv)
     {
       MPI_Send(&offset, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
       MPI_Send(&rows, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
-      MPI_Send(&matrix_a[offset][0], rows*N, MPI_DOUBLE,dest,1, MPI_COMM_WORLD);
-      MPI_Send(&matrix_b, N*N, MPI_DOUBLE, dest, 1, MPI_COMM_WORLD);
+      MPI_Send(&a[offset][0], rows*N, MPI_DOUBLE,dest,1, MPI_COMM_WORLD);
+      MPI_Send(&b, N*N, MPI_DOUBLE, dest, 1, MPI_COMM_WORLD);
       offset = offset + rows;
     }
 
@@ -67,13 +67,13 @@ int main(int argc, char **argv)
       source = i;
       MPI_Recv(&offset, 1, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
       MPI_Recv(&rows, 1, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
-      MPI_Recv(&matrix_c[offset][0], rows*N, MPI_DOUBLE, source, 2, MPI_COMM_WORLD, &status);
+      MPI_Recv(&c[offset][0], rows*N, MPI_DOUBLE, source, 2, MPI_COMM_WORLD, &status);
     }
 
     printf("\nResult Matrix C = Matrix A * Matrix B:\n\n");
     for (int i = 0; i<N; i++) {
       for (int j = 0; j<N; j++)
-        printf("%.0f\t", matrix_c[i][j]);
+        printf("%.0f\t", c[i][j]);
       printf ("\n");
     }
     printf ("\n");
@@ -83,20 +83,20 @@ int main(int argc, char **argv)
     source = 0;
     MPI_Recv(&offset, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
     MPI_Recv(&rows, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-    MPI_Recv(&matrix_a, rows*N, MPI_DOUBLE, source, 1, MPI_COMM_WORLD, &status);
-    MPI_Recv(&matrix_b, N*N, MPI_DOUBLE, source, 1, MPI_COMM_WORLD, &status);
+    MPI_Recv(&a, rows*N, MPI_DOUBLE, source, 1, MPI_COMM_WORLD, &status);
+    MPI_Recv(&b, N*N, MPI_DOUBLE, source, 1, MPI_COMM_WORLD, &status);
 
     for (int k = 0; k<N; k++) {
       for (int i = 0; i<rows; i++) {
-        matrix_c[i][k] = 0.0;
+        c[i][k] = 0.0;
         for (int j = 0; j<N; j++)
-          matrix_c[i][k] = matrix_c[i][k] + matrix_a[i][j] * matrix_b[j][k];
+          c[i][k] = c[i][k] + a[i][j] * b[j][k];
       }
     }
 
     MPI_Send(&offset, 1, MPI_INT, 0, 2, MPI_COMM_WORLD);
     MPI_Send(&rows, 1, MPI_INT, 0, 2, MPI_COMM_WORLD);
-    MPI_Send(&matrix_c, rows*N, MPI_DOUBLE, 0, 2, MPI_COMM_WORLD);
+    MPI_Send(&c, rows*N, MPI_DOUBLE, 0, 2, MPI_COMM_WORLD);
   }
 
   MPI_Finalize();
