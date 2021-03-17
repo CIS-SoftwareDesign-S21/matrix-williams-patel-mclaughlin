@@ -35,7 +35,7 @@ double *a = read_matrix_from_file("a.txt");
 double *b = read_matrix_from_file("b.txt");
 double *c_actual = read_matrix_from_file("c.txt");
 double *c = malloc(MATSIZE * MATSIZE * sizeof(double));
-c = (double*)malloc(sizeof(double) * nrows);
+c = (double*)malloc(sizeof(double) * 5);
    if (taskid == MASTER)
    {
       /* Measure start time */
@@ -50,7 +50,7 @@ c = (double*)malloc(sizeof(double) * nrows);
          rows = (dest <= extra) ? averow+1 : averow;   	
          MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
          MPI_Send(&rows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-         MPI_Send(&a[offset * bCols + 0], rows*bRows, MPI_DOUBLE, dest, mtype,
+         MPI_Send(&a[offset * i], rows*bRows, MPI_DOUBLE, dest, mtype,
                    MPI_COMM_WORLD);
          MPI_Send(&b, bRows*bCols, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
          offset = offset + rows;
@@ -62,7 +62,7 @@ c = (double*)malloc(sizeof(double) * nrows);
          source = i;
          MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
          MPI_Recv(&rows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&c[offset *bCols+ 0], rows*bCols, MPI_DOUBLE, source, mtype, 
+         MPI_Recv(&c[offset * i], rows*bCols, MPI_DOUBLE, source, mtype, 
                   MPI_COMM_WORLD, &status);
       }
 
