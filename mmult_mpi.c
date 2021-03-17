@@ -1,92 +1,4 @@
-#include "mpi.h"
-#include <stdio.h>
-#include <stdlib.h>
-
-#define MATSIZE 500
-#define aRows MATSIZE            /* number of rows in matrix A */
-#define bRows MATSIZE            /* number of columns in matrix A */
-#define bCols MATSIZE            /* number of columns in matrix B */
-#define MASTER 0               /* taskid of first task */
-#define FROM_MASTER 1          /* setting a message type */
-#define FROM_WORKER 2          /* setting a message type */
-
-int mpi_mmult(double *c, 
-	      double *a, int aRows, int aCols, 
-	      double *b, int bRows, int bCols) 
-{
-int	numtasks = aRows;              
-int taskid;                
-int numworkers;            
-int source;            
-int dest;                 
-int mtype;             
-int rows;              
-int averow extra offset; 
-int i, j, k, rc;            
-MPI_Status status;
-
-MPI_Init(&argc,&argv);
-MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
-MPI_Comm_size(MPI_COMM_WORLD,&numtasks);
-if (numtasks < 2 ) {
-  printf("Need at least two MPI tasks. Quitting...\n");
-  MPI_Abort(MPI_COMM_WORLD, rc);
-  exit(1);
-  }
-numworkers = numtasks-1;
-
-
-   if (taskid == MASTER)
-   {
-      printf("mpi_mm has started with %d tasks.\n",numtasks);
-      for (i=0; i<aRows; i++)
-         for (j=0; j<aCols; j++)
-            a[i][j]= i+j;
-      for (i=0; i<bRows; i++)
-         for (j=0; j<bCols; j++)
-            b[i][j]= i*j;
-
-      /* Measure start time */
-      double start = MPI_Wtime();
-
-      averow = aRows/numworkers;
-      extra = aRows%numworkers;
-      offset = 0;
-      mtype = FROM_MASTER;
-      for (dest=1; dest<=numworkers; dest++)
-      {
-         rows = (dest <= extra) ? averow+1 : averow;   	
-         MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-         MPI_Send(&rows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-         MPI_Send(&a[offset][0], rows*bRows, MPI_DOUBLE, dest, mtype,
-                   MPI_COMM_WORLD);
-         MPI_Send(&b, bRows*bCols, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
-         offset = offset + rows;
-      }
-
-      mtype = FROM_WORKER;
-      for (i=1; i<=numworkers; i++)
-      {
-         source = i;
-         MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&rows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&c[offset][0], rows*bCols, MPI_DOUBLE, source, mtype, 
-                  MPI_COMM_WORLD, &status);
-      }
-
-      double finish = MPI_Wtime();
-      printf("Done in %f seconds.\n", finish - start);
-   }
-
-
-   if (taskid > MASTER)
-   {
-      mtype = FROM_MASTER;
-      MPI_Recv(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
-      MPI_Recv(&rows, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
-      MPI_Recv(&a, rows*bRows, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
-      MPI_Recv(&b, bRows*bCols, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
-
+/*
       for (k=0; k<bCols; k++)
          for (i=0; i<rows; i++)
          {
@@ -94,10 +6,111 @@ numworkers = numtasks-1;
             for (j=0; j<bRows; j++)
                c[i][k] = c[i][k] + a[i][j] * b[j][k];
          }
-      mtype = FROM_WORKER;
-      MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
-      MPI_Send(&rows, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
-      MPI_Send(&c, rows*bCols, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD);
-   }
-   MPI_Finalize();
+*/
+#include "mpi.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include "mat.h"
+
+#define min(x, y) ((x)<(y)?(x):(y))
+#define MATSIZE 5
+
+int main(int argc, char* argv[])
+{
+    int nrows, ncols;
+
+    double *aa, *b, *c;
+    double *buffer, ans;
+    double *times;
+    double total_times;
+
+    int run_index;
+    int nruns;
+    int myid, master, numprocs;
+    
+    double starttime, endtime;
+    MPI_Status status;
+    int i, j, numsent, sender;
+    int anstype, row;
+
+    srand(time(0));
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+
+    if (argc > 1) {
+        nrows = atoi(argv[1]);
+        ncols = nrows;
+        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        // b = (double*)malloc(sizeof(double) * ncols);
+        // b = gen_matrix(nrows, ncols);
+        double *b = read_matrix_from_file("b.txt");
+        double *c_actual = read_matrix_from_file("c.txt");
+        double *c = malloc(MATSIZE * MATSIZE * sizeof(double));
+        c = (double*)malloc(sizeof(double) * nrows);
+        buffer = (double*)malloc(sizeof(double) * ncols);
+        master = 0;
+        if (myid == master) {
+            // Master Code goes here
+            //aa = gen_matrix(nrows, ncols);
+            double *aa = read_matrix_from_file("a.txt");
+            starttime = MPI_Wtime();
+            numsent = 0;
+            MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
+            for (i = 0; i < min(numprocs-1, nrows); i++) {
+                for (j = 0; j < ncols; j++) {
+                    buffer[j] = aa[i * ncols + j];
+                }  
+                MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
+                numsent++;
+            }
+            for (i = 0; i < nrows; i++) {
+                MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                    MPI_COMM_WORLD, &status);
+                sender = status.MPI_SOURCE;
+                anstype = status.MPI_TAG;
+                c[anstype-1] = ans;
+                if (numsent < nrows) {
+                    for (j = 0; j < ncols; j++) {
+                        buffer[j] = aa[numsent*ncols + j];
+                    }  
+                    MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, 
+                        MPI_COMM_WORLD);
+                    numsent++;
+                } else {
+                    MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
+                }
+            } 
+            endtime = MPI_Wtime();
+            printf("Time taken: %f\n",(endtime - starttime));
+            print_matrix(c, nrows, ncols);
+        } else {
+            //Worker Code
+            MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
+            if (myid <= nrows) {
+                while(1) {
+                    MPI_Recv(buffer, ncols, MPI_DOUBLE, master, MPI_ANY_TAG, 
+                        MPI_COMM_WORLD, &status);
+                    if (status.MPI_TAG == 0){
+                        break;
+                    }
+                    row = status.MPI_TAG;
+                    for(int i = 0; i < ncols; i++){
+                    ans = 0.0;
+                        for (j = 0; j < ncols; j++) {
+                            ans += buffer[i*ncols+j] * b[j];
+                        }  
+                    }
+                    MPI_Send(&ans, 1, MPI_DOUBLE, master, row, MPI_COMM_WORLD);
+                }
+            }
+        }
+    } else {
+        fprintf(stderr, "Usage matrix_times_vector <size>\n");
+    }
+    MPI_Finalize();
+    return 0;
 }
