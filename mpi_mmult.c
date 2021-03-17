@@ -4,7 +4,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define N 5
+#define N 9
 
 MPI_Status status;
 
