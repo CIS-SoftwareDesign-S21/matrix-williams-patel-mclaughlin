@@ -18,15 +18,9 @@ int main(int argc, char **argv)
   struct timeval start, stop;
 
 
-  workerTaskCount = processCount - 1;
+  
   int N = 0;
-  if (argc > 1) {
-    N = atoi(argv[1]);
-  }
-  if(N % workerTaskCount != 0 || N == 0){
-    fprintf(stderr, "Usage mpi_mmult <size>\n");
-    exit(1);
-  }
+  
 
 
 
@@ -34,7 +28,14 @@ int main(int argc, char **argv)
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
   MPI_Comm_size(MPI_COMM_WORLD, &processCount);
 
-  
+  workerTaskCount = processCount - 1;
+  if (argc > 1) {
+    N = atoi(argv[1]);
+  }
+  if(N % workerTaskCount != 0 || N == 0){
+    fprintf(stderr, "Usage mpi_mmult <size>\n");
+    MPI_Abort(1);
+  }
 double a[N][N],b[N][N],c[N][N];
 
  if (processId == 0) {
