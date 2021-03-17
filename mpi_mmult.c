@@ -48,7 +48,7 @@ double *c_actual = read_matrix_from_file("c.txt");
          rows = (dest <= extra) ? averow+1 : averow;   	
          MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
          MPI_Send(&rows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-         MPI_Send(&a[offset][0], rows*bRows, MPI_DOUBLE, dest, mtype,
+         MPI_Send(&a[offset * aCols + 0], rows*bRows, MPI_DOUBLE, dest, mtype,
                    MPI_COMM_WORLD);
          MPI_Send(&b, bRows*bCols, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
          offset = offset + rows;
@@ -60,7 +60,7 @@ double *c_actual = read_matrix_from_file("c.txt");
          source = i;
          MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
          MPI_Recv(&rows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&c[offset][0], rows*bCols, MPI_DOUBLE, source, mtype, 
+         MPI_Recv(&c[offset *bCols+ 0], rows*bCols, MPI_DOUBLE, source, mtype, 
                   MPI_COMM_WORLD, &status);
       }
 
@@ -80,9 +80,9 @@ double *c_actual = read_matrix_from_file("c.txt");
       for (k=0; k<bCols; k++)
          for (i=0; i<rows; i++)
          {
-            c[i][k] = 0.0;
+            c[i * bCols + j] = 0;
             for (j=0; j<bRows; j++)
-               c[i][k] = c[i][k] + a[i][j] * b[j][k];
+               c[i * bCols + j] += a[i * aRows + k] * b[k * bCols + j];
          }
       mtype = FROM_WORKER;
       MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
