@@ -1,14 +1,15 @@
+//mpiexec -f ~/hosts -n 4 ./test_mpi2 
 #include <stdlib.h>
 #include <stdio.h>
 #include "mpi.h"
 #include <time.h>
 #include <sys/time.h>
 
-#define N 9
+
 
 MPI_Status status;
 
-double a[N][N],b[N][N],c[N][N];
+
 
 int main(int argc, char **argv)
 {
@@ -21,6 +22,13 @@ int main(int argc, char **argv)
   MPI_Comm_size(MPI_COMM_WORLD, &processCount);
 
   workerTaskCount = processCount - 1;
+  if (argc > 1) {
+    N = atoi(argv[1]);
+    if(N % workerTaskCount != 0){
+        fprintf(stderr, "Usage mpi_mmult <size>\n");
+    }
+  }
+double a[N][N],b[N][N],c[N][N];
 
  if (processId == 0) {
 	
@@ -48,16 +56,17 @@ int main(int argc, char **argv)
 	    printf("\n");
     }
 
-    rows = N/workerTaskCount;
-    offset = 0;
+    rows = N/workerTaskCount; //number of rows to be sent to the child processes
+    offset = 0; //how we determine which row we sending to which child process
 
     for (dest=1; dest <= workerTaskCount; dest++)
     {
+      //Offset, number of rows, the row of A to be computed, and matrix b are sent to a child process
       MPI_Send(&offset, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
       MPI_Send(&rows, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
       MPI_Send(&a[offset][0], rows*N, MPI_DOUBLE,dest,1, MPI_COMM_WORLD);
       MPI_Send(&b, N*N, MPI_DOUBLE, dest, 1, MPI_COMM_WORLD);
-      offset = offset + rows;
+      offset = offset + rows; //increment offset so we aren't sending the same rows
     }
 
     for (int i = 1; i <= workerTaskCount; i++)
