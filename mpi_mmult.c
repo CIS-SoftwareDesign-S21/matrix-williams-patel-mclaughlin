@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   }
   if(N % workerTaskCount != 0 || N == 0){
     fprintf(stderr, "Usage mpi_mmult <size>\n");
-    exit(1)
+    exit(1);
   }
 
 
