@@ -42,6 +42,8 @@ test_o3_simd:	test_mmult.c mmult_simd.c mat.c
 	gcc -O3 test_mmult.c mmult_simd.c mat.c -lm -o test_o3_simd
 test_mpi:	test_mmult.c mmult_simd.c mat.c
 	mpicc mmult_mpi.c mat.c -lm -o test_mpi
+test_mpi2:	test_mmult.c mmult_simd.c mat.c
+	mpicc mpi_mmult.c mat.c -lm -o test_mpi2
 clean:
 	rm -f *.o
 	rm -f ${PGMS}
