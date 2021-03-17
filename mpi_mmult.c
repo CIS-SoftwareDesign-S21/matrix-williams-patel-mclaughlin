@@ -34,6 +34,8 @@ numworkers = numtasks-1;
 double *a = read_matrix_from_file("a.txt");
 double *b = read_matrix_from_file("b.txt");
 double *c_actual = read_matrix_from_file("c.txt");
+double *c = malloc(MATSIZE * MATSIZE * sizeof(double));
+c = (double*)malloc(sizeof(double) * nrows);
    if (taskid == MASTER)
    {
       /* Measure start time */
@@ -48,7 +50,7 @@ double *c_actual = read_matrix_from_file("c.txt");
          rows = (dest <= extra) ? averow+1 : averow;   	
          MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
          MPI_Send(&rows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-         MPI_Send(&a[offset * aCols + 0], rows*bRows, MPI_DOUBLE, dest, mtype,
+         MPI_Send(&a[offset * bCols + 0], rows*bRows, MPI_DOUBLE, dest, mtype,
                    MPI_COMM_WORLD);
          MPI_Send(&b, bRows*bCols, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
          offset = offset + rows;
