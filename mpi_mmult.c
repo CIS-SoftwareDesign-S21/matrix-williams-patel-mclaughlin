@@ -17,9 +17,6 @@ int main(int argc, char **argv)
 
   struct timeval start, stop;
 
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &processId);
-  MPI_Comm_size(MPI_COMM_WORLD, &processCount);
 
   workerTaskCount = processCount - 1;
   int N = 0;
@@ -28,7 +25,16 @@ int main(int argc, char **argv)
   }
   if(N % workerTaskCount != 0 || N == 0){
     fprintf(stderr, "Usage mpi_mmult <size>\n");
+    exit(1)
   }
+
+
+
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &processId);
+  MPI_Comm_size(MPI_COMM_WORLD, &processCount);
+
+  
 double a[N][N],b[N][N],c[N][N];
 
  if (processId == 0) {
