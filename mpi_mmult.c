@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 
   workerTaskCount = processCount - 1;
   if (argc > 1) {
-    N = atoi(argv[1]);
+    int N = atoi(argv[1]);
     if(N % workerTaskCount != 0){
         fprintf(stderr, "Usage mpi_mmult <size>\n");
     }
