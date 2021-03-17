@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MATSIZE 500
+#define MATSIZE 5
 #define aRows MATSIZE            
 #define bRows MATSIZE            
 #define bCols MATSIZE            
@@ -50,7 +50,7 @@ c = (double*)malloc(sizeof(double) * 5);
          rows = (dest <= extra) ? averow+1 : averow;   	
          MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
          MPI_Send(&rows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-         MPI_Send(&a[offset * i], rows*bRows, MPI_DOUBLE, dest, mtype,
+         MPI_Send(&a, rows*bRows, MPI_DOUBLE, dest, mtype,
                    MPI_COMM_WORLD);
          MPI_Send(&b, bRows*bCols, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
          offset = offset + rows;
@@ -62,7 +62,7 @@ c = (double*)malloc(sizeof(double) * 5);
          source = i;
          MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
          MPI_Recv(&rows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&c[offset * i], rows*bCols, MPI_DOUBLE, source, mtype, 
+         MPI_Recv(&c, rows*bCols, MPI_DOUBLE, source, mtype, 
                   MPI_COMM_WORLD, &status);
       }
 
