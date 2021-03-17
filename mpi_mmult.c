@@ -4,7 +4,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define N 4
+#define N 5
 
 MPI_Status status;
 
@@ -12,7 +12,7 @@ double a[N][N],b[N][N],c[N][N];
 
 int main(int argc, char **argv)
 {
-  int processCount, processId, slaveTaskCount, source, dest, rows, offset;
+  int processCount, processId, workerTaskCount, source, dest, rows, offset;
 
   struct timeval start, stop;
 
@@ -20,7 +20,7 @@ int main(int argc, char **argv)
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
   MPI_Comm_size(MPI_COMM_WORLD, &processCount);
 
-  slaveTaskCount = processCount - 1;
+  workerTaskCount = processCount - 1;
 
  if (processId == 0) {
 	
@@ -31,8 +31,6 @@ int main(int argc, char **argv)
         b[i][j]= rand()%10;
       }
     }
-	
-  printf("\n\t\tMatrix - Matrix Multiplication using MPI\n");
 
    printf("\nMatrix A\n\n");
     for (int i = 0; i<N; i++) {
@@ -50,10 +48,10 @@ int main(int argc, char **argv)
 	    printf("\n");
     }
 
-    rows = N/slaveTaskCount;
+    rows = N/workerTaskCount;
     offset = 0;
 
-    for (dest=1; dest <= slaveTaskCount; dest++)
+    for (dest=1; dest <= workerTaskCount; dest++)
     {
       MPI_Send(&offset, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
       MPI_Send(&rows, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
@@ -62,7 +60,7 @@ int main(int argc, char **argv)
       offset = offset + rows;
     }
 
-    for (int i = 1; i <= slaveTaskCount; i++)
+    for (int i = 1; i <= workerTaskCount; i++)
     {
       source = i;
       MPI_Recv(&offset, 1, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
