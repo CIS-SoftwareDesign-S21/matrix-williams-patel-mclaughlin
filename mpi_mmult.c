@@ -22,11 +22,12 @@ int main(int argc, char **argv)
   MPI_Comm_size(MPI_COMM_WORLD, &processCount);
 
   workerTaskCount = processCount - 1;
+  int N = 0;
   if (argc > 1) {
-    int N = atoi(argv[1]);
-    if(N % workerTaskCount != 0){
-        fprintf(stderr, "Usage mpi_mmult <size>\n");
-    }
+    N = atoi(argv[1]);
+  }
+  if(N % workerTaskCount != 0 || N == 0){
+    fprintf(stderr, "Usage mpi_mmult <size>\n");
   }
 double a[N][N],b[N][N],c[N][N];
 
