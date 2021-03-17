@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   }
   if(N % workerTaskCount != 0 || N == 0){
     fprintf(stderr, "Usage mpi_mmult <size>\n");
-    MPI_Abort(1);
+    MPI_Abort(MPI_COMM_WORLD,1);
   }
 double a[N][N],b[N][N],c[N][N];
 
