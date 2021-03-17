@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
             endtime = MPI_Wtime();
             printf("Time taken: %f\n",(endtime - starttime));
             print_matrix(c, nrows, ncols);
-            compare_matrices(c_actual,c);
+            compare_matrices(c_actual,c,MATSIZE,MATSIZE);
         } else {
             //Worker Code
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
