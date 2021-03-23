@@ -13,16 +13,8 @@ MPI_Status status;
 
 int main(int argc, char **argv)
 {
-  int processCount, processId, workerTaskCount, source, dest, rows, offset;
-
-  struct timeval start, stop;
-
-
-  
+  int processCount, processId, workerTaskCount, source, dest, rows, offset, extra;
   int N = 0;
-  
-
-
 
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
@@ -32,14 +24,14 @@ int main(int argc, char **argv)
   if (argc > 1) {
     N = atoi(argv[1]);
   }
-  if(N % workerTaskCount != 0 || N == 0){
+  if(N % workerTaskCount != 0 || N == 0){ //if the matrix size is 0 or the amount of rows/cols isnt divisable by the number of workers then the program aborts
     fprintf(stderr, "Usage mpi_mmult <size>\n");
     MPI_Abort(MPI_COMM_WORLD,1);
   }
-double a[N][N],b[N][N],c[N][N];
+double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
 
  if (processId == 0) {
-	
+	//creates two matricies with random values a and b
     srand ( time(NULL) );
     for (int i = 0; i<N; i++) {
       for (int j = 0; j<N; j++) {
@@ -65,7 +57,8 @@ double a[N][N],b[N][N],c[N][N];
     }
 
     rows = N/workerTaskCount; //number of rows to be sent to the child processes
-    offset = 0; //how we determine which row we sending to which child process
+    extra = N%workerTaskCount;
+    offset = 0; //how we determine which row(s) we sending to which child process
 
     for (dest=1; dest <= workerTaskCount; dest++)
     {
@@ -76,9 +69,9 @@ double a[N][N],b[N][N],c[N][N];
       MPI_Send(&b, N*N, MPI_DOUBLE, dest, 1, MPI_COMM_WORLD);
       offset = offset + rows; //increment offset so we aren't sending the same rows
     }
-
     for (int i = 1; i <= workerTaskCount; i++)
     {
+      //here we recieve the rows computed by the workers
       source = i;
       MPI_Recv(&offset, 1, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
       MPI_Recv(&rows, 1, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
@@ -112,6 +105,7 @@ double a[N][N],b[N][N],c[N][N];
     MPI_Send(&offset, 1, MPI_INT, 0, 2, MPI_COMM_WORLD);
     MPI_Send(&rows, 1, MPI_INT, 0, 2, MPI_COMM_WORLD);
     MPI_Send(&c, rows*N, MPI_DOUBLE, 0, 2, MPI_COMM_WORLD);
+    //sends the computed rows back to the root 
   }
 
   MPI_Finalize();
