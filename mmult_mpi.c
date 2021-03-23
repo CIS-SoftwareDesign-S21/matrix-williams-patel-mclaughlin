@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
             printf ("\n");
         }
         } else {
-            // Slave Code goes here
+            
             MPI_Bcast(b, ncols*nrows, MPI_DOUBLE, master, MPI_COMM_WORLD);
             if (myid <= nrows) {
                 while(1) {
