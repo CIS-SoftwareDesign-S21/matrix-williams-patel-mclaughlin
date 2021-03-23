@@ -42,40 +42,39 @@ int main(int argc, char* argv[])
         // b = (double*)malloc(sizeof(double) * ncols);
         double a[nrows][ncols],b[nrows][ncols],c[nrows][ncols];
         master = 0;
-        for (int i = 0; i<nCols; i++) {
-        for (int j = 0; j<nCols; j++) {
+        for (int i = 0; i<ncols; i++) {
+        for (int j = 0; j<ncols; j++) {
             a[i][j]= rand()%10;
             b[i][j]= rand()%10;
         }
         }
 
         printf("\nMatrix A\n\n");
-        for (int i = 0; i<nCols; i++) {
-        for (int j = 0; j<nCols; j++) {
+        for (int i = 0; i<ncols; i++) {
+        for (int j = 0; j<ncols; j++) {
             printf("%.0f\t", a[i][j]);
         }
             printf("\n");
         }
         printf("\nMatrix B\n\n");
-        for (int i = 0; i<nCols; i++) {
-        for (int j = 0; j<nCols; j++) {
+        for (int i = 0; i<ncols; i++) {
+        for (int j = 0; j<ncols; j++) {
             printf("%.0f\t", b[i][j]);
         }
             printf("\n");
         }
-    if (myid == master) {
+        if (myid == master) {
             // Master Code goes here
             //aa = gen_matrix(nrows, ncols);
-            
             starttime = MPI_Wtime();
             numsent = 0;
             MPI_Bcast(b, ncols*nrows, MPI_DOUBLE, master, MPI_COMM_WORLD);
             for (i = 0; i < min(numprocs-1, nrows); i++) {
-                MPI_Send(&a[numsent][0], ncols, MPI_DOUBLE,dest,1, MPI_COMM_WORLD);
+                MPI_Send(&a[numsent][0], ncols, MPI_DOUBLE,i+1,i+1, MPI_COMM_WORLD);
                 numsent++;
             }
             for (i = 0; i < nrows; i++) {
-                MPI_Recv(&c[offset][0], ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                MPI_Recv(&c[numsent][0], ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
                 sender = status.MPI_SOURCE;
                 if (numsent < nrows) {
@@ -94,10 +93,7 @@ int main(int argc, char* argv[])
               printf ("\n");
             }
             printf ("\n");
-        }
         } else {
-            
-            MPI_Bcast(b, ncols*nrows, MPI_DOUBLE, master, MPI_COMM_WORLD);
             if (myid <= nrows) {
                 while(1) {
                     MPI_Recv(buffer, ncols, MPI_DOUBLE, master, MPI_ANY_TAG, 
@@ -106,16 +102,16 @@ int main(int argc, char* argv[])
                         break;
                     }
                     row = status.MPI_TAG;
-                    for (int k = 0; k<N; k++) {
+                    for (int k = 0; k<ncols; k++) {
                         c[i][k] = 0.0;
-                        for (int j = 0; j<N; j++)
+                        for (int j = 0; j<ncols; j++)
                             c[i][k] = c[i][k] + a[i][j] * b[j][k];
                     }
                     MPI_Send(&c, ncols, MPI_DOUBLE, master, row, MPI_COMM_WORLD);
                 }
             }
-        }
-    } else {
+          }
+        } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
     MPI_Finalize();
