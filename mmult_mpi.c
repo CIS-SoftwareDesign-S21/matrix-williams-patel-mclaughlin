@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
                 while(1) {
                     MPI_Recv(&a, ncols, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
                     MPI_Recv(&b, ncols*nrows, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-                    MPI_Recv(&offset, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+                    MPI_Recv(&offset, 1, MPI_INT, master, 1, MPI_COMM_WORLD, &status);
                     if (status.MPI_TAG == 0){
                         break;
                     }
