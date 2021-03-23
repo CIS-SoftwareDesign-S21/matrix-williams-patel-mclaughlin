@@ -87,8 +87,8 @@ int main(int argc, char* argv[])
             endtime = MPI_Wtime();
             printf("Time taken: %f\n",(endtime - starttime));
             printf("\nResult Matrix C = Matrix A * Matrix B:\n\n");
-            for (int i = 0; i<nCols; i++) {
-              for (int j = 0; j<nCols; j++)
+            for (int i = 0; i<ncols; i++) {
+              for (int j = 0; j<ncols; j++)
                 printf("%.0f\t", c[i][j]);
               printf ("\n");
             }
