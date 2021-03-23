@@ -24,10 +24,12 @@ int main(int argc, char **argv)
   if (argc > 1) {
     N = atoi(argv[1]);
   }
+  /*
   if(N % workerTaskCount != 0 || N == 0){ //if the matrix size is 0 or the amount of rows/cols isnt divisable by the number of workers then the program aborts
     fprintf(stderr, "Usage mpi_mmult <size>\n");
     MPI_Abort(MPI_COMM_WORLD,1);
   }
+  */
 double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
 
  if (processId == 0) {
@@ -69,6 +71,16 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
       MPI_Send(&b, N*N, MPI_DOUBLE, dest, 1, MPI_COMM_WORLD);
       offset = offset + rows; //increment offset so we aren't sending the same rows
     }
+    if(offset < N) //compute extra rows if there is a modulus 
+    {
+      for (int k = 0; k<N; k++) {
+      for (int i = offset; i<N; i++) {
+        c[i][k] = 0.0;
+        for (int j = 0; j<N; j++)
+          c[i][k] = c[i][k] + a[i][j] * b[j][k];
+      }
+    }
+    }
     for (int i = 1; i <= workerTaskCount; i++)
     {
       //here we recieve the rows computed by the workers
@@ -77,6 +89,7 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
       MPI_Recv(&rows, 1, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
       MPI_Recv(&c[offset][0], rows*N, MPI_DOUBLE, source, 2, MPI_COMM_WORLD, &status);
     }
+
 
     printf("\nResult Matrix C = Matrix A * Matrix B:\n\n");
     for (int i = 0; i<N; i++) {
@@ -101,7 +114,6 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
           c[i][k] = c[i][k] + a[i][j] * b[j][k];
       }
     }
-
     MPI_Send(&offset, 1, MPI_INT, 0, 2, MPI_COMM_WORLD);
     MPI_Send(&rows, 1, MPI_INT, 0, 2, MPI_COMM_WORLD);
     MPI_Send(&c, rows*N, MPI_DOUBLE, 0, 2, MPI_COMM_WORLD);
