@@ -42,30 +42,30 @@ int main(int argc, char* argv[])
         // b = (double*)malloc(sizeof(double) * ncols);
         double a[nrows][ncols],b[nrows][ncols],c[nrows][ncols];
         master = 0;
-        for (int i = 0; i<ncols; i++) {
-        for (int j = 0; j<ncols; j++) {
-            a[i][j]= rand()%10;
-            b[i][j]= rand()%10;
-        }
-        }
-
-        printf("\nMatrix A\n\n");
-        for (int i = 0; i<ncols; i++) {
-        for (int j = 0; j<ncols; j++) {
-            printf("%.0f\t", a[i][j]);
-        }
-            printf("\n");
-        }
-        printf("\nMatrix B\n\n");
-        for (int i = 0; i<ncols; i++) {
-        for (int j = 0; j<ncols; j++) {
-            printf("%.0f\t", b[i][j]);
-        }
-            printf("\n");
-        }
         if (myid == master) {
             // Master Code goes here
             //aa = gen_matrix(nrows, ncols);
+            for (int i = 0; i<ncols; i++) {
+            for (int j = 0; j<ncols; j++) {
+                a[i][j]= rand()%10;
+                b[i][j]= rand()%10;
+            }
+            }
+
+            printf("\nMatrix A\n\n");
+            for (int i = 0; i<ncols; i++) {
+            for (int j = 0; j<ncols; j++) {
+                printf("%.0f\t", a[i][j]);
+            }
+                printf("\n");
+            }
+            printf("\nMatrix B\n\n");
+            for (int i = 0; i<ncols; i++) {
+            for (int j = 0; j<ncols; j++) {
+                printf("%.0f\t", b[i][j]);
+            }
+                printf("\n");
+            }
             starttime = MPI_Wtime();
             numsent = 0;
             MPI_Bcast(b, ncols*nrows, MPI_DOUBLE, master, MPI_COMM_WORLD);
