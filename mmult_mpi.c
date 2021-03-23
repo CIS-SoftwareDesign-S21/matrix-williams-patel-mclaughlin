@@ -79,6 +79,7 @@ int main(int argc, char* argv[])
                 sender = status.MPI_SOURCE;
                 if (numsent < nrows) {
                     MPI_Send(&a[numsent][0], ncols, MPI_DOUBLE,sender,numsent+1, MPI_COMM_WORLD);
+                    MPI_Send(&b, ncols*nrows, MPI_DOUBLE,sender,numsent+1, MPI_COMM_WORLD);
                     numsent++;
                 } else {
                     MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
@@ -96,8 +97,8 @@ int main(int argc, char* argv[])
         } else {
             if (myid <= nrows) {
                 while(1) {
-                    MPI_Recv(buffer, ncols, MPI_DOUBLE, master, MPI_ANY_TAG, 
-                        MPI_COMM_WORLD, &status);
+                    MPI_Recv(&a, ncols, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+                    MPI_Recv(&b, ncols*nrows, MPI_DOUBLE, master, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
                     if (status.MPI_TAG == 0){
                         break;
                     }
