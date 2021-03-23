@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
             MPI_Bcast(b, ncols*nrows, MPI_DOUBLE, master, MPI_COMM_WORLD);
             for (i = 0; i < min(numprocs-1, nrows); i++) {
                 MPI_Send(&a[numsent][0], ncols, MPI_DOUBLE,i+1,i+1, MPI_COMM_WORLD);
-                MPI_Send(&b, ncols*nrows, MPI_DOUBLE,sender,numsent+1, MPI_COMM_WORLD);
-                MPI_Send(&offset, 1, MPI_INT, sender, numsent+1, MPI_COMM_WORLD);
+                MPI_Send(&b, ncols*nrows, MPI_DOUBLE,numsent+1,numsent+1, MPI_COMM_WORLD);
+                MPI_Send(&offset, 1, MPI_INT, numsent+1, numsent+1, MPI_COMM_WORLD);
                 numsent++;
                 offset = numsent;
             }
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
                         for (int j = 0; j<ncols; j++)
                             c[i][k] = c[i][k] + a[i][j] * b[j][k];
                     }
-                    MPI_Send(&offset, 1, MPI_INT, sender, numsent+1, MPI_COMM_WORLD);
+                    MPI_Send(&offset, 1, MPI_INT, master, row, MPI_COMM_WORLD);
                     MPI_Send(&c, ncols, MPI_DOUBLE, master, row, MPI_COMM_WORLD);
                 }
             }
