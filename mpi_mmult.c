@@ -15,6 +15,7 @@ int main(int argc, char **argv)
 {
   int processCount, processId, workerTaskCount, source, dest, rows, offset, extra;
   int N = 0;
+  double starttime, endtime;
 
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
@@ -41,7 +42,7 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
         b[i][j]= rand()%10;
       }
     }
-
+/*
    printf("\nMatrix A\n\n");
     for (int i = 0; i<N; i++) {
       for (int j = 0; j<N; j++) {
@@ -57,7 +58,8 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
       }
 	    printf("\n");
     }
-
+*/
+    starttime = MPI_Wtime();
     rows = N/workerTaskCount; //number of rows to be sent to the child processes
     extra = N%workerTaskCount;
     offset = 0; //how we determine which row(s) we sending to which child process
@@ -90,7 +92,7 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
       MPI_Recv(&c[offset][0], rows*N, MPI_DOUBLE, source, 2, MPI_COMM_WORLD, &status);
     }
 
-
+/*
     printf("\nResult Matrix C = Matrix A * Matrix B:\n\n");
     for (int i = 0; i<N; i++) {
       for (int j = 0; j<N; j++)
@@ -99,6 +101,9 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
     }
     printf ("\n");
   }
+*/
+  endtime = MPI_Wtime();
+  printf("Time taken: %f\n",(endtime - starttime));
  //worker process
   if (processId > 0) {
     source = 0;
