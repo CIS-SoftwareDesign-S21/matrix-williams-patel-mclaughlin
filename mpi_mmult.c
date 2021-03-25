@@ -14,8 +14,8 @@ MPI_Status status;
 int main(int argc, char **argv)
 {
   int processCount, processId, workerTaskCount, source, dest, rows, offset, extra;
-  int N,runs = 0;
-  double startTime, endTime, totalTime, workTime;
+  int N,runs,root = 0;
+  double startTime, endTime, totalTime, workTime, paraTime;
 
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
@@ -107,8 +107,11 @@ int main(int argc, char **argv)
   */
     endTime = MPI_Wtime();
     totalTime = endTime - startTime;
-    MPI_Reduce (&totalTime, &workTime, 1, MPI_DOUBLE_PRECISION, MPI_SUM, 0, MPI_COMM_WORLD);
-    printf("Time taken: %f\n",(workTime/processCount));
+    MPI_Reduce (&totalTime, &workTime, 1, MPI_DOUBLE_PRECISION, MPI_SUM, root, MPI_COMM_WORLD);
+    if (processId == root) {
+    paraTime = workTime/processCount;
+    }
+    printf("Time taken: %f\n",paraTime);
   //worker process
   }
 
