@@ -18,11 +18,7 @@ int main(int argc, char **argv)
   }
   pid_t cpid;
     if (fork()== 0){
-        gettimeofday(&t0, 0);
-        execvp(args[5], args);
-        gettimeofday(&t1, 0);
-        long elapsed = (t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec;
-        printf("%ld ms.\n", elapsed);
+        execvp(args[3], args);
     } else {
         cpid = wait(NULL);
     }
