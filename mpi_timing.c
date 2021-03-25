@@ -12,7 +12,7 @@ int main(int argc, char **argv)
   struct timeval t0,t1;
   pid_t child_pid;
   int child_status;
-  char* args[8] = {"mpiexec", "./test_mpi2","-f", "~/hosts", "-n", "4","10",NULL};
+  char* args[8] = {"mpiexec", "-n", "4","-f", "~/hosts", "./test_mpi2","100",NULL};
   
   pid_t pid;
     if (fork()== 0){
