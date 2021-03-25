@@ -112,6 +112,7 @@ for(N = 0; N < runs; N++)
     printf("Time taken: %f\n",(workTime/processCount));
   //worker process
   }
+}
     if (processId > 0) {
       source = 0;
       MPI_Recv(&offset, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
@@ -131,6 +132,5 @@ for(N = 0; N < runs; N++)
       MPI_Send(&c, rows*N, MPI_DOUBLE, 0, 2, MPI_COMM_WORLD);
       //sends the computed rows back to the root 
     }
-}
     MPI_Finalize();
 }
