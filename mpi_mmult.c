@@ -30,10 +30,10 @@ int main(int argc, char **argv)
     MPI_Abort(MPI_COMM_WORLD,1);
   }
   */
+ double a[numMults][numMults],b[numMults][numMults],c[numMults][numMults]; //creating space for the matricies
 for(N = 0; N < numMults; N++)
 {
-double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
-starttime = MPI_Wtime();
+
  if (processId == 0) {
 	//creates two matricies with random values a and b
     srand ( time(NULL) );
