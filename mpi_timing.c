@@ -13,7 +13,7 @@ int main(int argc, char **argv)
   int child_status;
   char* args[8] = {"mpiexec", "-f", "~/hosts", "-n", "4", "./test_mpi2"};
   if (argc > 1) {
-    args[6] = atoi(argv[1]);
+    args[6] = argv[1];
     args[7] = NULL;
   }
   pid_t cpid;
