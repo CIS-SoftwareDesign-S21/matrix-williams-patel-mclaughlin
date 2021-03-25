@@ -8,8 +8,8 @@
 
 
 MPI_Status status;
-
-
+double starttime,endtime;
+int numMults = 0;
 
 int main(int argc, char **argv)
 {
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
   workerTaskCount = processCount - 1;
   if (argc > 1) {
-    N = atoi(argv[1]);
+    numMults = atoi(argv[1]);
   }
   /*
   if(N % workerTaskCount != 0 || N == 0){ //if the matrix size is 0 or the amount of rows/cols isnt divisable by the number of workers then the program aborts
@@ -30,8 +30,10 @@ int main(int argc, char **argv)
     MPI_Abort(MPI_COMM_WORLD,1);
   }
   */
+for(N = 0; N < numMults; N++)
+{
 double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
-
+starttime = MPI_Wtime();
  if (processId == 0) {
 	//creates two matricies with random values a and b
     srand ( time(NULL) );
@@ -99,6 +101,9 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
     }
     printf ("\n");
   }
+  endtime = MPI_Wtime();
+  printf("Time taken: %f\n",(endtime - starttime));
+}
  //worker process
   if (processId > 0) {
     source = 0;
