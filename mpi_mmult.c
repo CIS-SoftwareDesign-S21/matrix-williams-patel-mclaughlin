@@ -100,11 +100,12 @@ double a[N][N],b[N][N],c[N][N]; //creating space for the matricies
       printf ("\n");
     }
     printf ("\n");
-  }
+  
 */
   endtime = MPI_Wtime();
   printf("Time taken: %f\n",(endtime - starttime));
  //worker process
+ }
   if (processId > 0) {
     source = 0;
     MPI_Recv(&offset, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
