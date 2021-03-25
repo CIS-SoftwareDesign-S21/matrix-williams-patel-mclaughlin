@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 {
   int processCount, processId, workerTaskCount, source, dest, rows, offset, extra;
   int N,runs = 0;
-  double starttime, endtime, totaltime, worktime;
+  double startTime, endTime, totalTime, workTime;
 
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
@@ -108,8 +108,8 @@ for(N = 0; N < runs; N++)
   */
     endTime = MPI_Wtime();
     totalTime = endTime - startTime;
-    MPI_Reduce (&totalTime, &workTime, 1, MPI_DOUBLE_PRECISION, MPI_SUM, root, MPI_COMM_WORLD);
-    printf("Time taken: %f\n",(worktime/processCount);
+    MPI_Reduce (&totalTime, &workTime, 1, MPI_DOUBLE_PRECISION, MPI_SUM, 0, MPI_COMM_WORLD);
+    printf("Time taken: %f\n",(worktime/processCount));
   //worker process
   }
     if (processId > 0) {
