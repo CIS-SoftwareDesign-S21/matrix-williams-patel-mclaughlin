@@ -107,11 +107,11 @@ int main(int argc, char **argv)
   */
     endTime = MPI_Wtime();
     totalTime = endTime - startTime;
-    MPI_Reduce (&totalTime, &workTime, 1, MPI_DOUBLE_PRECISION, MPI_SUM, root, MPI_COMM_WORLD);
+    //MPI_Reduce (&totalTime, &workTime, 1, MPI_DOUBLE_PRECISION, MPI_SUM, root, MPI_COMM_WORLD);
     if (processId == root) {
-    paraTime = workTime/processCount;
+    //paraTime = workTime/processCount;
     }
-    printf("Time taken: %f\n",paraTime);
+    printf("Time taken: %f\n",totalTime);
   //worker process
   }
 

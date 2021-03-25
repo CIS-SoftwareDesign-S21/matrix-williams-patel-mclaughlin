@@ -8,6 +8,7 @@
 
 int main(int argc, char **argv)
 {
+  int status;
   struct timeval t0,t1;
   pid_t child_pid;
   int child_status;
@@ -16,11 +17,12 @@ int main(int argc, char **argv)
     args[6] = argv[1];
     args[7] = NULL;
   }
-  pid_t cpid;
+  pid_t pid;
     if (fork()== 0){
-        execvp(args[3], args);
+        execvp(args[0], args);
     } else {
-        cpid = wait(NULL);
+        waitpid(pid, &status, 0);
     }
         
+    
 }
