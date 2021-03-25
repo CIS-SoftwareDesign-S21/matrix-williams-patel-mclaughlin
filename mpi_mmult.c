@@ -63,7 +63,7 @@ for(N = 0; N < runs; N++)
       }
   */
 
-      starttime = MPI_Wtime();
+      startTime = MPI_Wtime();
       rows = N/workerTaskCount; //number of rows to be sent to the child processes
       extra = N%workerTaskCount;
       offset = 0; //how we determine which row(s) we sending to which child process
@@ -109,7 +109,7 @@ for(N = 0; N < runs; N++)
     endTime = MPI_Wtime();
     totalTime = endTime - startTime;
     MPI_Reduce (&totalTime, &workTime, 1, MPI_DOUBLE_PRECISION, MPI_SUM, 0, MPI_COMM_WORLD);
-    printf("Time taken: %f\n",(worktime/processCount));
+    printf("Time taken: %f\n",(workTime/processCount));
   //worker process
   }
     if (processId > 0) {
