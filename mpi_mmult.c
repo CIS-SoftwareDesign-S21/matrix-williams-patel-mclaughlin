@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 
   workerTaskCount = processCount - 1;
   if (argc > 1) {
-    runs = atoi(argv[1]);
+    N = atoi(argv[1]);
   }
   /*
   if(N % workerTaskCount != 0 || N == 0){ //if the matrix size is 0 or the amount of rows/cols isnt divisable by the number of workers then the program aborts
