@@ -7,19 +7,21 @@
 #include <string.h>
 
 
+
 int main(int argc, char **argv)
 {
   int status;
   struct timeval t0,t1;
   pid_t child_pid;
   int child_status;
-  char* buffer;
+  char* buffer = malloc(sizeof(int) * 3);
   char* args[6] = {"mpiexec", "-n", "4","./test_mpi2"};
   
   pid_t pid;
 for(int i = 0; i < atoi(argv[1]); i++){
     if (fork()== 0){
-            args[4] = itoa(i,buffer,10);
+            sprintf(buffer, "%d", i);
+            args[4] = buffer;
             args[5] = NULL;
             execvp(args[0], args);
         } else {
