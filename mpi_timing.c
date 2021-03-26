@@ -21,10 +21,9 @@ for(int i = 0; i < atoi(argv[1]); i++){
             args[5] = NULL;
             execvp(args[0], args);
         } else {
-            waitpid(pid, &status, 0);
+            waitpid(pid, &status, 0); //wait for child to finish
         }
 }
-    
-        
+            
     
 }
