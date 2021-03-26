@@ -46,5 +46,7 @@ for i in data:
 # function to show the plot 
 plt.legend()
 plt.savefig('graph.png')
+plt.xlabel("Iterations")
+plt.ylabel("Time(10^-2)")
 plt.show()
 file1.close()
