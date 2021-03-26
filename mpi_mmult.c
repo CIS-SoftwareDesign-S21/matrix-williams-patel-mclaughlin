@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   int processCount, processId, workerTaskCount, source, dest, rows, offset, extra;
   int N,runs,root = 0;
   double startTime, endTime, totalTime, workTime, paraTime;
-  printf("This is N: %d", atoi(argv[1]));
+  //printf("This is N: %d", atoi(argv[1]));
 
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   workerTaskCount = processCount - 1;
   if (argc > 1) {
     N = atoi(argv[1]);
-    printf("This is N: %d",N );
+    //printf("This is N: %d",N );
   }
   /*
   if(N % workerTaskCount != 0 || N == 0){ //if the matrix size is 0 or the amount of rows/cols isnt divisable by the number of workers then the program aborts
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     if (processId == root) {
     //paraTime = workTime/processCount;
     }
-    printf("Time taken: %f\n",totalTime);
+    printf("%d,%f\n",N/ totalTime);
   //worker process
   }
 
