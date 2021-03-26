@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
             mmult(c1, a, n, n, b, n, n);
             clock_gettime(CLOCK_REALTIME, &end);
             times[0] = deltaTime(&start, &end);
-            printf("%d %f", n, times[0]);
+            //printf("%d %f", n, times[0]);
             clock_gettime(CLOCK_REALTIME, &start);
             mmult_omp(c2, a, n, n, b, n, n);
             clock_gettime(CLOCK_REALTIME, &end);
@@ -37,9 +37,8 @@ int main(int argc, char* argv[]) {
             double accum = ( end.tv_sec - start.tv_sec )
             + ( end.tv_nsec - start.tv_nsec )
             / BILLION;
-            printf("%d, %f", n,accum);
-            printf("\n");
-            compare_matrices(c1, c2, n, n);
+            printf("%d, %f\n", n,accum);
+            //compare_matrices(c1, c2, n, n);
         }
         
     } else {
