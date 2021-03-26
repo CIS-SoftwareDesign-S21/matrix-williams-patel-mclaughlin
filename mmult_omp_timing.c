@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     double times[2];
     if (argc > 1) {
         loops= atoi(argv[1]);
-        for(n = 0; n < loops; n++){
+        for(n = 0; n < loops; n+10){
             a = gen_matrix(n, n);
             b = gen_matrix(n, n);
             c1 = malloc(sizeof(double) * n * n);
