@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include "mat.h"
+#define BILLION 1E9
 
 int main(int argc, char* argv[]) {
     struct timespec start;
@@ -33,7 +34,10 @@ int main(int argc, char* argv[]) {
             mmult_omp(c2, a, n, n, b, n, n);
             clock_gettime(CLOCK_REALTIME, &end);
             times[1] = deltaTime(&start, &end);
-            printf("%d, %f", n,times[1]);
+            double accum = ( end.tv_sec - start.tv_sec )
+            + ( end.tv_nsec - start.tv_nsec )
+            / BILLION;
+            printf("%d, %f", n,accum);
             printf("\n");
             compare_matrices(c1, c2, n, n);
         }
