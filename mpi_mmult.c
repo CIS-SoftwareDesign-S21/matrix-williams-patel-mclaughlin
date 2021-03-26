@@ -42,8 +42,8 @@ int main(int argc, char **argv)
       srand ( time(NULL) );
       for (int i = 0; i<N; i++) {
         for (int j = 0; j<N; j++) {
-          a[i][j]= rand()%40;
-          b[i][j]= rand()%40;
+          a[i][j]= rand()%10;
+          b[i][j]= rand()%10;
         }
       }
   /*
