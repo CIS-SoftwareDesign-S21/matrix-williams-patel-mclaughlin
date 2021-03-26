@@ -16,6 +16,7 @@ int main(int argc, char **argv)
   int processCount, processId, workerTaskCount, source, dest, rows, offset, extra;
   int N,runs,root = 0;
   double startTime, endTime, totalTime, workTime, paraTime;
+  printf("This is N: %d", atoi(argv[1]));
 
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &processId);
