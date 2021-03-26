@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     if (processId == root) {
     //paraTime = workTime/processCount;
     }
-    printf("%d,%f\n",N/ totalTime);
+    printf("%d,%f\n",N, totalTime);
   //worker process
   }
 
