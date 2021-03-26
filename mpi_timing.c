@@ -17,7 +17,7 @@ int main(int argc, char **argv)
   pid_t pid;
 for(int i = 0; i < atoi(argv[1]); i++){
     if (fork()== 0){
-            args[4] = i + "0";
+            args[4] = itoa(i);
             args[5] = NULL;
             execvp(args[0], args);
         } else {
