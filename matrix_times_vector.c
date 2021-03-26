@@ -38,16 +38,20 @@ int main(int argc, char* argv[])
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
-        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        // b = (double*)malloc(sizeof(double) * ncols);
+        aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        b = (double*)malloc(sizeof(double) * ncols);
         b = gen_matrix(1, 5);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
         master = 0;
         if (myid == master) {
             // Master Code goes here
-            aa = gen_matrix(nrows, ncols);
-            
+            //aa = gen_matrix(nrows, ncols);
+            for (i = 0; i < nrows; i++) {
+            	for (j = 0; j < ncols; j++) {
+            	  aa[i*ncols + j] = (double)rand()/RAND_MAX;
+            	}
+                  }
             starttime = MPI_Wtime();
             numsent = 0;
             MPI_Bcast(b, ncols, MPI_DOUBLE, master, MPI_COMM_WORLD);
