@@ -35,6 +35,27 @@ mxv_omp_mpi:	mxv_omp_mpi.c mat.c
 test_mmult:	test_mmult.c mmult.c mat.c
 	gcc test_mmult.c mmult.c mat.c -lm -o test_mmult
 
+test_mmult_simd:	test_mmult.c mmult_simd.c mat.c
+	gcc test_mmult.c mmult_simd.c mat.c -lm -o test_mmult_simd
+
+test_o3_simd:	test_mmult.c mmult_simd.c mat.c
+	gcc -O3 test_mmult.c mmult_simd.c mat.c -lm -o test_o3_simd
+
+test_mpi:	test_mmult.c mmult_simd.c mat.c
+	mpicc mmult_mpi.c mat.c -lm -o test_mpi
+
+test_mpi2:	test_mmult.c mmult_simd.c mat.c
+	mpicc mpi_mmult.c mat.c -lm -o test_mpi2
+
+mmult_timing:		timing.c mmult.c mat.c
+	gcc timing.c mmult.c mat.c -lm -o mmult_timing
+
+mmult_simd_timing:	timing.c mmult_simd.c mat.c
+	gcc timing.c mmult_simd.c mat.c -lm -o mmult_simd_timing
+
+mmult_o3_simd_timing:	timing.c mmult_simd.c mat.c
+	gcc -O3 timing.c mmult_simd.c mat.c -lm -o mmult_o3_simd_timing
+
 clean:
 	rm -f *.o
 	rm -f ${PGMS}

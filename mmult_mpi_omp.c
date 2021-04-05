@@ -29,6 +29,28 @@ int main(int argc, char* argv[])
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+
+    if(argc>3)
+      {
+          srand(time(NULL));
+          int numRow=atoi(argv[1]); //no. of rows
+          int numCol=atoi(argv[2]); //no. of columns
+          FILE * fp; //this has new matrix
+          fp=fopen(argv[3],"w"); //opens in write mode
+          fprintf(fp,"rows(%d) cols(%d)\n",numRow,numCol);
+          int i,j;
+
+          for(i=0;i<numRow;i++)
+          {
+              for(j=0;j<numCol;j++)
+              {
+                  fprintf(fp,"%f ",(double)rand()/RAND_MAX);
+              }
+          fprintf(fp,"\n"); //print a new line
+          }
+          fclose(fp); //close the new matrix file
+      }
+
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
